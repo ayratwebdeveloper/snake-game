@@ -36,8 +36,7 @@ function drawSnake() {
 			snakeSize[index].x === snakeHead.x && 
 			snakeSize[index].y === snakeHead.y
 		) {
-			snakeTailCount -=1
-			// alert("Что же ты делаешь, рука твоя труба лотал")
+			snakeTailCount =3
 		}
 	}
 }
