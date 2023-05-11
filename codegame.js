@@ -1,99 +1,107 @@
-const world = document.getElementById('world')
-const pen = world.getContext('2d')
+const playground = document.getElementById('playground')
+const gameObject = playground.getContext('2d')
 // Ширина и количество квадратов на игровом поле
 let tileSize = 20
-let tileCount = world.width /tileSize
+let tileCount = playground.width /tileSize
 // Обьекты по оси X и Y
-let velocity = {
+let displacementSpeed = {
 	x:0,
 	y:0,
 }
-let food = {
-	x:25,
-	y:2,
+let snakeFood = {
+	x:15,
+	y:15,
 }
-let snake = []
+let snakeSize = []
 let snakeHead = {
-	x:5,
-	y:5,
+	x:10,
+	y:10,
 }
 // Начальная длина змеи
-let snakeTailCount = 1
+let snakeTailCount = 3
 // Функция рисует простарство для игры
 function drawWorld() {
-	pen.fillStyle = 'black'
-	pen.fillRect(0,0, world.width, world.height)
+	gameObject.fillStyle = 'black'
+	gameObject.fillRect(0,0, playground.width, playground.height)
 }
 // Функция отрисовывает змею на игровом поле
 function drawSnake() {
-	pen.fillStyle = 'darkgreen'
-	for(let i = 0; i < snake.length; i++)
-	// создаёт блоки 
+	gameObject.fillStyle = 'red'
+	for(let index = 0; index < snakeSize.length; index++)
+	// создаём блоки 
 	 {
-		penCanvas.fillRect(snake[i].x *tileSize, snake[i].y *tileSize, tileSize-2, tileSize-2)
+		gameObject.fillRect(snakeSize[index].x *tileSize, snakeSize[index].y *tileSize, tileSize-2, tileSize-2)
 // столкновение головы с телом
 		if(
-			snake[i].x === snakeHead.x && 
-			snake[i].y === snakeHead.y
+			snakeSize[index].x === snakeHead.x && 
+			snakeSize[index].y === snakeHead.y
 		) {
-			snakeTailCount = 1
+			snakeTailCount -=1
 			// alert("Что же ты делаешь, рука твоя труба лотал")
 		}
 	}
 }
 // Устанавливаем положение еды для змеи
 function drawFood() {
-	pen.fillStyle = 'orange'
-	pen.fillRect(food.x *tileSize, food.y *tileSize, tileSize -2, tileSize -2)
+	gameObject.fillStyle = 'orange'
+	gameObject.fillRect(snakeFood.x *tileSize, snakeFood.y *tileSize, tileSize -2, tileSize -2)
 }
 // Обновляем позицию главы относительно скорости перемещения змеи
 function updateSnakeHead() {
-	snakeHead.x +=velocity.x
-	snakeHead.y +=velocity.y
+	snakeHead.x +=displacementSpeed.x
+	snakeHead.y +=displacementSpeed.y
 // столкновения с границей карты 
-	if (snakeHead.x < 0) { snakeHead.x = tileCount - 1}
-	if (snakeHead.x > 0) { snakeHead.x = tileCount - 1}
-	if (snakeHead.y < 0) { snakeHead.y = tileCount - 1}
-	if (snakeHead.y > 0) { snakeHead.y = tileCount - 1}
+	if (snakeHead.x < 0) { 
+		snakeHead.x = tileCount - 1
+	}
+	if (snakeHead.x > tileCount - 1) { 
+		snakeHead.x = 0
+	}
+	if (snakeHead.y < 0) {
+		 snakeHead.y = tileCount - 1
+		}
+	if (snakeHead.y > tileCount - 1) { 
+		snakeHead.y = 0
+	}
 }
 // Генерируем тело змеи
 function updateSnakeBody() {
-	snake.push({
+	snakeSize.push({
 		x:snakeHead.x,
 		y:snakeHead.y
 	})
-// проверка количества плиток длине змеи
-	while(snake.length >snakeTailCount){
-		snake.shift()
+// проверка количества плиток к длине змеи
+	while(snakeSize.length >snakeTailCount){
+		snakeSize.shift()
 	}
 }
 // Разбрасываем еду для змени на игровом поле и проверяем столкнулась ли она с едой
 function eatFood() {
-	if(food.x === snakeHead.x && food.y === snakeHead.y){
+	if(snakeFood.x === snakeHead.x && snakeFood.y === snakeHead.y){
 		// змея растет
 		snakeTailCount ++
 // новое расположение еды
-		food.x = Math.floor(Math.random() *tileCount),
-		food.y = Math.floor(Math.random() *tileCount)
+		snakeFood.x = Math.floor(Math.random() *tileCount),
+		snakeFood.y = Math.floor(Math.random() *tileCount)
 	}
 }
 // Обрабатываем нажатие на кнопки
 const keyDownHandlers = {
 	'ArrowLeft': () => {
-		velocity.x = -1
-		velocity.y = 0
+		displacementSpeed.x = -1
+		displacementSpeed.y = 0
 	},
 	'ArrowRight': () => {
-		velocity.x = 1
-		velocity.y = 0
+		displacementSpeed.x = 1
+		displacementSpeed.y = 0
 	},
 	'ArrowUp': () => {
-		velocity.x = 0
-		velocity.y = -1
+		displacementSpeed.x = 0
+		displacementSpeed.y = -1
 	},
 	'ArrowDown': () => {
-		velocity.x = 0
-		velocity.y = 1
+		displacementSpeed.x = 0
+		displacementSpeed.y = 1
 	}
 }
 // Обрабатываем события
@@ -107,8 +115,8 @@ function updateGame(){
 	updateSnakeHead()
 
 	drawWorld()
-  // drawSnake()
-
+	drawSnake()
+	
 	eatFood()
 	drawFood()
 
@@ -116,4 +124,4 @@ function updateGame(){
 }
 // Обработчик нажатия на клавиши
 document.addEventListener('keydown', onKeyDown)
-setInterval(updateGame, 1000/3)
+setInterval(updateGame, 1000/7)
